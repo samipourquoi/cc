@@ -18,8 +18,9 @@ lexer src =
 nextToken :: String -> (Token, String)
 nextToken src = fromMaybe (Unknown, src) token
   where 
-    token = readWord src `mplus`
-        readSymbol src
+    token = readNumber src `mplus`
+      readWord src `mplus`
+      readSymbol src
 
 readWord :: String -> Maybe (Token, String)
 readWord src = 
@@ -47,6 +48,22 @@ readSymbol src = do
   where
     tokenize :: Maybe (String, Token)
     tokenize = find (\(s,_) -> s `isPrefixOf` src) symbols
+
+readNumber :: String -> Maybe (Token, String)
+readNumber src
+  | not . null $ int = 
+    let (i,newsrc) = head int in 
+    Just (IntegerLiteral i, newsrc)
+
+  | not . null $ double = 
+    let (d,newsrc) = head double in
+    Just (DoubleLiteral d,  newsrc)
+
+  | otherwise = Nothing
+
+  where 
+    int    = reads src :: [(Int, String)]
+    double = reads src :: [(Double,  String)]
 
 tokenizeNumber :: String -> Maybe Token
 tokenizeNumber = undefined

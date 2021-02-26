@@ -16,6 +16,7 @@ data Token =
   | RCurlyBrace
   | Semicolon
   | IntegerLiteral Int
+  | DoubleLiteral Double
   | Identifier String
   | Unknown
   deriving (Show)
