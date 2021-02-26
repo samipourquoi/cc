@@ -37,10 +37,3 @@ symbols =
     ( "+",  undefined    ),
     ( "-",  undefined    ),
     ( "/",  undefined    )]
-
--- tokenizeSymbol '{' = Just LCurlyBrace
--- tokenizeSymbol '}' = Just RCurlyBrace
--- tokenizeSymbol '(' = Just LParenthesis
--- tokenizeSymbol ')' = Just RParenthesis
--- tokenizeSymbol ';' = Just RParenthesis
--- tokenizeSymbol _   = Nothing
