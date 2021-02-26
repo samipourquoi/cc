@@ -4,6 +4,7 @@ import Lexer.Token
 import Data.Char
 import Control.Monad
 import Data.Maybe
+import Data.List
 
 lexer :: String -> [Token]
 lexer "" = []
@@ -15,7 +16,10 @@ lexer src =
     (token, newsrc) = nextToken . dropWhile isSpace $ src
 
 nextToken :: String -> (Token, String)
-nextToken src = fromMaybe (Unknown, src) (readWord src)
+nextToken src = fromMaybe (Unknown, src) token
+  where 
+    token = readWord src `mplus`
+        readSymbol src
 
 readWord :: String -> Maybe (Token, String)
 readWord src = 
@@ -34,15 +38,15 @@ readWord src =
       Just k -> Keyword k
       Nothing -> Identifier word
 
-tokenizeWord :: String -> Maybe Token
-tokenizeWord str = Just $ Identifier str
+readSymbol :: String -> Maybe (Token, String)
+readSymbol src = do
+  (symbol, token) <- tokenize
+  let newsrc = drop (length symbol) src
+  return (token, newsrc)
 
-tokenizeSymbol :: Char -> Maybe Token
-tokenizeSymbol '{' = Just LCurlyBrace
-tokenizeSymbol '}' = Just RCurlyBrace
-tokenizeSymbol '(' = Just LParenthesis
-tokenizeSymbol ')' = Just RParenthesis
-tokenizeSymbol ';' = Just RParenthesis
+  where
+    tokenize :: Maybe (String, Token)
+    tokenize = find (\(s,_) -> s `isPrefixOf` src) symbols
 
 tokenizeNumber :: String -> Maybe Token
 tokenizeNumber = undefined

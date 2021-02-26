@@ -7,7 +7,7 @@ build-type: Simple
 library
     exposed-modules: Compiler
     hs-source-dirs: src
-    build-depends: base
+    build-depends: base, containers
     default-language: Haskell2010
 
 executable hs-cc

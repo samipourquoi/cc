@@ -1,5 +1,8 @@
 module Lexer.Token where
 
+import Data.Maybe
+import Data.List
+
 data Keyword =
     Return
   | Int
@@ -21,3 +24,23 @@ tokenizeKeyword :: [Char] -> Maybe Keyword
 tokenizeKeyword "int"    = Just Int
 tokenizeKeyword "return" = Just Return
 tokenizeKeyword _        = Nothing
+
+symbols =
+   [( "{",  LCurlyBrace  ),
+    ( "}",  RCurlyBrace  ),
+    ( "(",  LParenthesis ),
+    ( ")",  RParenthesis ),
+    ( ";",  Semicolon    ),
+    ( "++", undefined    ),
+    ( "->", undefined    ),
+    ( "*",  undefined    ),
+    ( "+",  undefined    ),
+    ( "-",  undefined    ),
+    ( "/",  undefined    )]
+
+-- tokenizeSymbol '{' = Just LCurlyBrace
+-- tokenizeSymbol '}' = Just RCurlyBrace
+-- tokenizeSymbol '(' = Just LParenthesis
+-- tokenizeSymbol ')' = Just RParenthesis
+-- tokenizeSymbol ';' = Just RParenthesis
+-- tokenizeSymbol _   = Nothing
