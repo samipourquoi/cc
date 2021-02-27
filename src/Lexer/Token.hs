@@ -3,23 +3,28 @@ module Lexer.Token where
 import Data.Maybe
 import Data.List
 
+data Literal =
+    IntegerLiteral Int
+  | DoubleLiteral Double
+  deriving (Show, Eq)
+
 data Keyword =
     Return
   | Int
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Token =
     Keyword Keyword
+  | Literal Literal
   | LParenthesis
   | RParenthesis
   | LCurlyBrace
   | RCurlyBrace
   | Semicolon
-  | IntegerLiteral Int
-  | DoubleLiteral Double
   | Identifier String
+  | Comma
   | Unknown
-  deriving (Show)
+  deriving (Show, Eq)
 
 tokenizeKeyword :: [Char] -> Maybe Keyword
 tokenizeKeyword "int"    = Just Int
@@ -32,6 +37,7 @@ symbols =
     ( "(",  LParenthesis ),
     ( ")",  RParenthesis ),
     ( ";",  Semicolon    ),
+    ( ",",  Comma        ),
     ( "++", undefined    ),
     ( "->", undefined    ),
     ( "*",  undefined    ),

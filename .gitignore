@@ -1,1 +1,9 @@
+# build
 dist*
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode
+.idea

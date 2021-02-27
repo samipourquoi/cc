@@ -1,5 +1,7 @@
-module Compiler 
-( compile ) where
+module Compiler where
     
-compile :: String -> ()
-compile src = ()
+import Lexer
+import Parser
+
+compile :: String -> AST
+compile = parser . lexer

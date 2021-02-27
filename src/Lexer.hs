@@ -5,6 +5,7 @@ import Data.Char
 import Control.Monad
 import Data.Maybe
 import Data.List
+import Control.Applicative
 
 lexer :: String -> [Token]
 lexer "" = []
@@ -18,8 +19,8 @@ lexer src =
 nextToken :: String -> (Token, String)
 nextToken src = fromMaybe (Unknown, src) token
   where 
-    token = readNumber src `mplus`
-      readWord src `mplus`
+    token = readNumber src <|>
+      readWord src <|>
       readSymbol src
 
 readWord :: String -> Maybe (Token, String)
@@ -53,11 +54,11 @@ readNumber :: String -> Maybe (Token, String)
 readNumber src
   | not . null $ int = 
     let (i,newsrc) = head int in 
-    Just (IntegerLiteral i, newsrc)
+    Just (Literal $ IntegerLiteral i, newsrc)
 
   | not . null $ double = 
     let (d,newsrc) = head double in
-    Just (DoubleLiteral d,  newsrc)
+    Just (Literal $ DoubleLiteral d,  newsrc)
 
   | otherwise = Nothing
 
