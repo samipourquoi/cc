@@ -83,7 +83,15 @@ data AST_OPERATION =
   | DIV    -- /
   deriving Show
 parseOperation :: Parser AST_OPERATION
-parseOperation = undefined
+parseOperation = do
+  t <- item
+  case t of
+    Plus  -> return PLUS
+    Minus -> return MINUS
+    Star  -> return MULT
+    Slash -> return DIV
+    _     -> mzero
+
 
 -- | Variable declarations.
 -- e.g. int main
@@ -97,6 +105,7 @@ parseDeclaration = do
 -- | Number literals.
 -- e.g. 2.5
 newtype AST_LITERAL = AST_LITERAL Literal
+  deriving Show
 parseLiteral :: Parser AST_LITERAL
 parseLiteral = do
   t <- item
@@ -158,10 +167,30 @@ parseFunction = do
 -- e.g 4.0 + a
 data AST_EXPRESSION =
     EXPR_LITERAL Literal
-  | EXPR_INFIX_OPERATION AST_IDENTIFIER AST_OPERATION AST_IDENTIFIER
+  | EXPR_IDENTIFIER AST_IDENTIFIER
+  | EXPR_INFIX_OPERATION AST_EXPRESSION AST_OPERATION AST_EXPRESSION
   deriving Show
 parseExpression :: Parser AST_EXPRESSION
-parseExpression = undefined
+parseExpression =
+  (EXPR_IDENTIFIER <$> parseIdentifier)
+    <|> parseLiteral' 
+
+  where
+    parseLiteral' = do
+      t <- item
+      case t of
+        Literal l -> return $ EXPR_LITERAL l
+        _         -> mzero
+
+parseInfixOperation = do
+  identifier <- parseExpression
+  operation  <- parseOperation
+
+  EXPR_INFIX_OPERATION 
+    identifier
+    operation
+    <$> parseExpression
+
 
 -- | Statements.
 -- e.g. println("hello world");
@@ -170,5 +199,19 @@ data AST_STATEMENT =
   | STMT_RETURN_VOID           -- return;
   | STMT_EXPRESSION AST_EXPRESSION
   deriving Show
-parseStatement :: [Token] -> Maybe (AST_STATEMENT, [Token])
-parseStatement = undefined
+parseStatement :: Parser AST_STATEMENT
+parseStatement = do
+  stmt <- parseReturn
+    <|> parseExpression'
+  expect Semicolon
+  return stmt
+
+  where
+    parseReturn = do
+      expect (Keyword Return)
+
+      return STMT_RETURN_VOID
+        <|> (STMT_RETURN <$> parseExpression)
+
+    parseExpression' = 
+      STMT_EXPRESSION <$> parseExpression

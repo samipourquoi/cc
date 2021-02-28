@@ -23,6 +23,10 @@ data Token =
   | Semicolon
   | Identifier String
   | Comma
+  | Star
+  | Plus
+  | Minus
+  | Slash
   | Unknown
   deriving (Show, Eq)
 
@@ -40,7 +44,7 @@ symbols =
     ( ",",  Comma        ),
     ( "++", undefined    ),
     ( "->", undefined    ),
-    ( "*",  undefined    ),
-    ( "+",  undefined    ),
-    ( "-",  undefined    ),
-    ( "/",  undefined    )]
+    ( "*",  Star         ),
+    ( "+",  Plus         ),
+    ( "-",  Minus        ),
+    ( "/",  Slash        )]
